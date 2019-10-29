@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared.TaskApi.Models;
 using Shared.TaskApi.Services.Tasks;
 
 namespace Shared.TaskApi.Controllers
@@ -27,8 +28,15 @@ namespace Shared.TaskApi.Controllers
         {
             _logger.LogInformation("Getting task ids");
             var taskids = await _retriever.GetActiveTasks();
-            var taskmodels = taskids.Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" });
-            return Ok(taskmodels);
+            var taskmodels = taskids
+                .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
+                .ToArray();
+            var apiresult = new ApiResultModel<TaskDetailsModel[]>
+            {
+                isSuccess = true,
+                Result = taskmodels
+            };
+            return StatusCode(200, apiresult);
         }
     }
 
