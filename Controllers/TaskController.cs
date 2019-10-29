@@ -23,11 +23,21 @@ namespace Shared.TaskApi.Controllers
 
         // GET api/tasks
         [HttpGet]
-        public ActionResult<IEnumerable<string>> GetActiveTasks()
+        public async Task<ActionResult<IEnumerable<string>>> GetActiveTasks()
         {
             _logger.LogInformation("Getting task ids");
-            var taskids = _retriever.GetActiveTasks();
-            return Ok(taskids);
+            var taskids = await _retriever.GetActiveTasks();
+            var taskmodels = taskids.Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" });
+            return Ok(taskmodels);
         }
+    }
+
+    public class ApiResultModel<TResult>
+    {
+        public bool isSuccess { get; set; }
+        public string ErrorType { get; set; }
+        public string ErrorMessage { get; set; }
+        public TResult Result { get; set; }
+
     }
 }
