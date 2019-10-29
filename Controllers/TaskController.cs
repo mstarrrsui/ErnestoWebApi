@@ -48,7 +48,7 @@ namespace Shared.TaskApi.Controllers
                     ErrorMessage = e.Message,
                     ErrorType = e.GetType().ToString()
                 };
-                return this.Error("Get active tasks", ex);
+                return this.Error("Get active tasks", e);
             }
         }
     }
@@ -65,15 +65,15 @@ namespace Shared.TaskApi.Controllers
             return controller.StatusCode(200, apiresult);
         }
 
-        internal static ActionResult Error<TResult>(this ControllerBase controller, string message, Exception exception)
+        internal static ActionResult Error(this ControllerBase controller, string message, Exception exception)
         {
-            var apiresult = new ApiResultModel<TResult>
+            var apiresult = new ApiResultModel<object>
             {
                 isSuccess = false,
                 ErrorType = exception.GetType().Name,
                 ErrorMessage = message + ". " + exception.ToString()
             };
-            return controller.StatusCode(200, apiresult);
+            return controller.StatusCode(523, apiresult);
         }
     }
 }
