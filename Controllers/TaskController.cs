@@ -38,7 +38,7 @@ namespace Shared.TaskApi.Controllers
                     isSuccess = true,
                     Result = taskmodels
                 };
-                return StatusCode(200, apiresult);
+                return this.Success(taskmodels);
             }
             catch (Exception e)
             {
@@ -48,17 +48,32 @@ namespace Shared.TaskApi.Controllers
                     ErrorMessage = e.Message,
                     ErrorType = e.GetType().ToString()
                 };
-                return StatusCode(523, apiresult);
+                return this.Error("Get active tasks", ex);
             }
         }
     }
 
-    public class ApiResultModel<TResult>
+    internal static class ContollerExtensions
     {
-        public bool isSuccess { get; set; }
-        public string ErrorType { get; set; }
-        public string ErrorMessage { get; set; }
-        public TResult Result { get; set; }
+        internal static ActionResult Success<TResult>(this ControllerBase controller, TResult result)
+        {
+            var apiresult = new ApiResultModel<TResult>
+            {
+                isSuccess = true,
+                Result = result
+            };
+            return controller.StatusCode(200, apiresult);
+        }
 
+        internal static ActionResult Error<TResult>(this ControllerBase controller, string message, Exception exception)
+        {
+            var apiresult = new ApiResultModel<TResult>
+            {
+                isSuccess = false,
+                ErrorType = exception.GetType().Name,
+                ErrorMessage = message + ". " + exception.ToString()
+            };
+            return controller.StatusCode(200, apiresult);
+        }
     }
 }
