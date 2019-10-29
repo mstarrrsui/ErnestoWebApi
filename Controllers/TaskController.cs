@@ -26,17 +26,30 @@ namespace Shared.TaskApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetActiveTasks()
         {
-            _logger.LogInformation("Getting task ids");
-            var taskids = await _retriever.GetActiveTasks();
-            var taskmodels = taskids
-                .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
-                .ToArray();
-            var apiresult = new ApiResultModel<TaskDetailsModel[]>
+            try
             {
-                isSuccess = true,
-                Result = taskmodels
-            };
-            return StatusCode(200, apiresult);
+                _logger.LogInformation("Getting task ids");
+                var taskids = await _retriever.GetActiveTasks();
+                var taskmodels = taskids
+                    .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
+                    .ToArray();
+                var apiresult = new ApiResultModel<TaskDetailsModel[]>
+                {
+                    isSuccess = true,
+                    Result = taskmodels
+                };
+                return StatusCode(200, apiresult);
+            }
+            catch (Exception e)
+            {
+                var apiresult = new ApiResultModel<TaskDetailsModel[]>
+                {
+                    isSuccess = false,
+                    ErrorMessage = e.Message,
+                    ErrorType = e.GetType().ToString()
+                };
+                return StatusCode(523, apiresult);
+            }
         }
     }
 
