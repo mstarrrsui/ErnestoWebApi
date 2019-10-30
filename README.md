@@ -12,6 +12,11 @@ ASynchronous Programming aka async / await / Task
 Day 2
 
 EF Core (ORM) using RSMSMIRROR
+
+Scaffolding
+dotnet ef dbcontext scaffold "Server=RSUITSTDB;Databas
+e=RSMSMIRROR;User Id=sa;Password=tropical;" Microsoft.EntityFrameworkCore.SqlServer --data-annotations --output-dir Data/Entities --context-dir RsuiDbContext --table "Task","TaskType","TaskSubType","DEPARTMENTS","EMPLOYEE"
+
 Task
 TaskType
 TaskSubType

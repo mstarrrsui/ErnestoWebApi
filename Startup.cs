@@ -30,6 +30,7 @@ namespace Shared.TaskApi
             var settings = Configuration.GetSection("Settings");
             services.Configure<Settings.SiteSettings>(settings);
             services.AddSingleton<TaskDataRetriever>();
+            services.AddSingleton<StackDataRetriever>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
