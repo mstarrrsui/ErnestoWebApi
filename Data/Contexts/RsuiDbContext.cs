@@ -18,16 +18,9 @@ namespace Shared.TaskApi.Data.Entities
         public virtual DbSet<Departments> Departments { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
         public virtual DbSet<TaskEntity> Task { get; set; }
-        public DbSet<TaskSubType> TaskSubType { get; set; }
-        public DbSet<TaskType> TaskType { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Server=RSUITSTDB;Database=RSMSMIRROR;User Id=sa;Password=tropical;");
-            }
-        }
+        public virtual DbSet<TaskSubType> TaskSubType { get; set; }
+        public virtual DbSet<TaskType> TaskType { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

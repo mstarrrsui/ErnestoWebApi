@@ -26,6 +26,6 @@ namespace Shared.TaskApi.Data.Entities
         public virtual ICollection<TaskEntity> Task { get; set; }
 
         [InverseProperty("TaskType")]
-        public ICollection<TaskSubType> TaskSubType { get; set; }
+        public virtual ICollection<TaskSubType> TaskSubType { get; set; }
     }
 }

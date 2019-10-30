@@ -16,15 +16,15 @@ namespace Shared.TaskApi.Services.Tasks
     }
     public class StackDataRetriever
     {
-        public async Task<IEnumerable<TaskType>> GetTaskTypes()
+        public IQueryable<TaskType> GetDepartmentTaskTypesAndSubTypes(RsuiDbContext dbContext, int profitCenterId, bool tracked)
         {
-            using (var dbcontext = new RsuiDbContext())
-            {
-                var stacks = await dbcontext.TaskType
+                var query = dbContext.TaskType
                     .Include(inst => inst.TaskSubType)
-                    .ToListAsync();
-                return stacks;
-            }
+                    .Where(inst => inst.ProfitCenterKey == profitCenterId);
+
+                return tracked
+                    ? query.AsTracking()
+                    : query.AsNoTracking();
         }
     }
 }
