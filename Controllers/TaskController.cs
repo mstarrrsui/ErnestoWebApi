@@ -22,7 +22,7 @@ namespace Shared.TaskApi.Controllers
             this._retriever = retriever;
         }
 
-        // GET api/tasks
+        // TODO: come back and add code to actually hit the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetActiveTasks()
         {

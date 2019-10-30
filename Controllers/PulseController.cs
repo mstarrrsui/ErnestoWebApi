@@ -22,5 +22,22 @@ namespace Shared.TaskApi.Controllers
             return Ok($"pong - version:${this._siteSettings.Version}");
         }
     }
+    [Route("api/stacks")]
+    [ApiController]
+    public class StacksController : ControllerBase
+    {
+        private readonly SiteSettings _siteSettings;
+        public StacksController(IOptions<SiteSettings> siteSettings)
+        {
+            this._siteSettings = siteSettings.Value;
+        }
+
+        // GET api/values
+        [HttpGet]
+        public ActionResult<string> GetDepartmentStacks()
+        {
+            return Ok($"pong - version:${this._siteSettings.Version}");
+        }
+    }
 
 }
