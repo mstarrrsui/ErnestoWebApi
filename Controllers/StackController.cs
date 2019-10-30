@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using AutoMapper;
+using ErnestoWebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Shared.TaskApi.Services.Tasks;
@@ -13,11 +16,17 @@ namespace Shared.TaskApi.Controllers
     {
         private readonly SiteSettings _SiteSettings;
         private readonly StackDataRetriever _StackDataRetriever;
+        private readonly IMapper _ModelMapper;
 
-        public StackController(IOptions<SiteSettings> siteSettings, StackDataRetriever stackDataRetriever)
+        public StackController(
+            IOptions<SiteSettings> siteSettings, 
+            IMapper modelMapper,
+            StackDataRetriever stackDataRetriever
+            )
         {
             _SiteSettings = siteSettings.Value;
             _StackDataRetriever  = stackDataRetriever;
+            _ModelMapper = modelMapper;
         }
 
         // GET api/values
@@ -26,8 +35,9 @@ namespace Shared.TaskApi.Controllers
         {
             try
             {
-                var stackids = await _StackDataRetriever.GetTaskTypes();
-                return this.Success(stackids);
+                var stacks = await _StackDataRetriever.GetTaskTypes();
+                var stackmodels = _ModelMapper.Map<StackDetailsModel[]>(stacks);
+                return this.Success(stackmodels);
             }
             catch (Exception ex)
             {
@@ -35,5 +45,4 @@ namespace Shared.TaskApi.Controllers
             }
         }
     }
-
 }

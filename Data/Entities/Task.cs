@@ -8,6 +8,7 @@ namespace Shared.TaskApi.Data.Entities
     [Table("Task")]
     public partial class TaskEntity
     {
+        [Key]
         [Column("TaskID")]
         public int TaskId { get; set; }
         public int CurrentTaskType { get; set; }

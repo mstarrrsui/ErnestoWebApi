@@ -12,10 +12,13 @@ namespace Shared.TaskApi.Data.Entities
             Task = new HashSet<TaskEntity>();
         }
 
+        [Key]
         [Column("TaskSubTypeID")]
         public int TaskSubTypeId { get; set; }
+
         [Column("TaskTypeID")]
         public int TaskTypeId { get; set; }
+
         [Required]
         [StringLength(50)]
         public string Description { get; set; }
@@ -25,6 +28,7 @@ namespace Shared.TaskApi.Data.Entities
         [ForeignKey("TaskTypeId")]
         [InverseProperty("TaskSubType")]
         public virtual TaskType TaskType { get; set; }
+
         [InverseProperty("CurrentSubTypeNavigation")]
         public virtual ICollection<TaskEntity> Task { get; set; }
     }

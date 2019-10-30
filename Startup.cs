@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +30,8 @@ namespace Shared.TaskApi
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var settings = Configuration.GetSection("Settings");
             services.Configure<Settings.SiteSettings>(settings);
-            services.AddSingleton<TaskDataRetriever>();
+            services.AddAutoMapper(typeof(Startup));
+            services.AddTransient<TaskDataRetriever>();
             services.AddTransient<StackDataRetriever>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
