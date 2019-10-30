@@ -12,4 +12,12 @@ namespace Shared.TaskApi.Services.Tasks
             return Enumerable.Range(1, 10);
         }
     }
+    public class StackDataRetriever
+    {
+        public async Task<IEnumerable<int>> GetTaskTypes()
+        {
+            await Task.Delay(3000);
+            return Enumerable.Range(1, 10);
+        }
+    }
 }
