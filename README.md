@@ -18,3 +18,11 @@ EF CORE (ORM) talk to RSMSMIRROR
 
 Windows Authentication
 Getting ready for TFS
+
+
+Setting Up Our Tables from Command Line
+
+dotnet ef dbcontext scaffold "Server=RSUITSTDB;Databas
+e=RSMSMIRROR;User Id=sa;Password=tropical;" Microsoft.EntityFrameworkCore.SqlServer --data-ann
+otations --output-dir Data/Entities --context-dir Data/Contexts --context RsuiDbContext --tabl
+e Task --table TaskType --table TaskSubType --table DEPARTMENTS --table EMPLOYEE
