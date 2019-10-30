@@ -12,10 +12,10 @@ namespace Shared.TaskApi.Data.Entities
         {
             InverseDefaultAssistantNavigation = new HashSet<Employee>();
             InverseReportingManager = new HashSet<Employee>();
-            TaskCompletedByNavigation = new HashSet<Task>();
-            TaskCreatedByNavigation = new HashSet<Task>();
-            TaskCurrentlyAssignedToNavigation = new HashSet<Task>();
-            TaskSuspensedByNavigation = new HashSet<Task>();
+            TaskCompletedByNavigation = new HashSet<TaskEntity>();
+            TaskCreatedByNavigation = new HashSet<TaskEntity>();
+            TaskCurrentlyAssignedToNavigation = new HashSet<TaskEntity>();
+            TaskSuspensedByNavigation = new HashSet<TaskEntity>();
         }
 
         [Column("EMP_RECORD_NUMBER")]
@@ -125,12 +125,12 @@ namespace Shared.TaskApi.Data.Entities
         [InverseProperty("ReportingManager")]
         public virtual ICollection<Employee> InverseReportingManager { get; set; }
         [InverseProperty("CompletedByNavigation")]
-        public virtual ICollection<Task> TaskCompletedByNavigation { get; set; }
+        public virtual ICollection<TaskEntity> TaskCompletedByNavigation { get; set; }
         [InverseProperty("CreatedByNavigation")]
-        public virtual ICollection<Task> TaskCreatedByNavigation { get; set; }
+        public virtual ICollection<TaskEntity> TaskCreatedByNavigation { get; set; }
         [InverseProperty("CurrentlyAssignedToNavigation")]
-        public virtual ICollection<Task> TaskCurrentlyAssignedToNavigation { get; set; }
+        public virtual ICollection<TaskEntity> TaskCurrentlyAssignedToNavigation { get; set; }
         [InverseProperty("SuspensedByNavigation")]
-        public virtual ICollection<Task> TaskSuspensedByNavigation { get; set; }
+        public virtual ICollection<TaskEntity> TaskSuspensedByNavigation { get; set; }
     }
 }

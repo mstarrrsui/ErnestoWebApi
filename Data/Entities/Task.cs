@@ -5,7 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shared.TaskApi.Data.Entities
 {
-    public partial class Task
+    [Table("Task")]
+    public partial class TaskEntity
     {
         [Column("TaskID")]
         public int TaskId { get; set; }

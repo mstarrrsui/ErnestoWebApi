@@ -17,7 +17,7 @@ namespace Shared.TaskApi.Data.Entities
 
         public virtual DbSet<Departments> Departments { get; set; }
         public virtual DbSet<Employee> Employee { get; set; }
-        public virtual DbSet<Task> Task { get; set; }
+        public virtual DbSet<TaskEntity> Task { get; set; }
         public virtual DbSet<TaskSubType> TaskSubType { get; set; }
         public virtual DbSet<TaskType> TaskType { get; set; }
 
@@ -25,7 +25,6 @@ namespace Shared.TaskApi.Data.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Server=RSUITSTDB;Database=RSMSMIRROR;User Id=sa;Password=tropical;");
             }
         }
@@ -149,7 +148,7 @@ namespace Shared.TaskApi.Data.Entities
                     .HasConstraintName("FK_EMPLOYEE_EMPLOYEE1");
             });
 
-            modelBuilder.Entity<Task>(entity =>
+            modelBuilder.Entity<TaskEntity>(entity =>
             {
                 entity.HasIndex(e => e.BrokerCurrentlyAssignedTo)
                     .HasName("IDX_Task_BrokerCurrentlyAssignedTo");

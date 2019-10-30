@@ -9,7 +9,7 @@ namespace Shared.TaskApi.Data.Entities
     {
         public TaskSubType()
         {
-            Task = new HashSet<Task>();
+            Task = new HashSet<TaskEntity>();
         }
 
         [Column("TaskSubTypeID")]
@@ -26,6 +26,6 @@ namespace Shared.TaskApi.Data.Entities
         [InverseProperty("TaskSubType")]
         public virtual TaskType TaskType { get; set; }
         [InverseProperty("CurrentSubTypeNavigation")]
-        public virtual ICollection<Task> Task { get; set; }
+        public virtual ICollection<TaskEntity> Task { get; set; }
     }
 }
