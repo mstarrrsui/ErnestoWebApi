@@ -33,21 +33,10 @@ namespace Shared.TaskApi.Controllers
                 var taskmodels = taskids
                     .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
                     .ToArray();
-                var apiresult = new ApiResultModel<TaskDetailsModel[]>
-                {
-                    isSuccess = true,
-                    Result = taskmodels
-                };
                 return this.Success(taskmodels);
             }
             catch (Exception e)
             {
-                var apiresult = new ApiResultModel<TaskDetailsModel[]>
-                {
-                    isSuccess = false,
-                    ErrorMessage = e.Message,
-                    ErrorType = e.GetType().ToString()
-                };
                 return this.Error("Get active tasks", e);
             }
         }
@@ -71,7 +60,7 @@ namespace Shared.TaskApi.Controllers
             {
                 isSuccess = false,
                 ErrorType = exception.GetType().Name,
-                ErrorMessage = message + ". " + exception.ToString()
+                ErrorMessage = message + ". " + exception.ToString() // FIXME: never expose internal details
             };
             return controller.StatusCode(523, apiresult);
         }
