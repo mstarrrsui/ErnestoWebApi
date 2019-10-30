@@ -22,7 +22,7 @@ namespace Shared.TaskApi.Controllers
             this._retriever = retriever;
         }
 
-        // GET api/tasks
+        // TODO - come back and add code to actually hut the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetActiveTasks()
         {
@@ -37,7 +37,7 @@ namespace Shared.TaskApi.Controllers
                 {
                     isSuccess = true,
                     Result = taskmodels
-                };
+                }
                 return this.Success(taskmodels);
             }
             catch (Exception e)
