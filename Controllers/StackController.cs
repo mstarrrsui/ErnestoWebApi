@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared.TaskApi.Data.Entities;
 using Shared.TaskApi.Models;
 using Shared.TaskApi.Services.Tasks;
 
@@ -23,26 +24,25 @@ namespace Shared.TaskApi.Controllers
 
         // GET api/stacks
         [HttpGet]
-        public async Task<ActionResult<string>> GetDepartmentStacks()
+        public async Task<ActionResult<ApiResultModel<StackDetailsModel[]>>> GetDepartmentStacks()
         {
 
             try
             {
                 _logger.LogInformation("Getting stacks");
-                var taskids = await _retriever.GetDepartmentStacks();
-                var taskmodels = taskids
-                    .Select(id => new StackDetailsModel { Id = id, Name = $"Stack {id}" })
-                    .ToArray();
+                var stacks = await _retriever.GetTaskTypes();
                 var apiresult = new ApiResultModel<StackDetailsModel[]>
                 {
                     isSuccess = true,
-                    Result = taskmodels
+                    Result = stacks
+                    .Select(s => new StackDetailsModel { Id = s.TaskTypeId, Name = s.Description })
+                    .ToArray()
                 };
-                return this.Success(taskmodels);
+                return this.Success(apiresult);
             }
             catch (Exception e)
             {
-                var apiresult = new ApiResultModel<StackDetailsModel[]>
+                var apiresult = new ApiResultModel<object>
                 {
                     isSuccess = false,
                     ErrorMessage = e.Message,
@@ -51,6 +51,11 @@ namespace Shared.TaskApi.Controllers
                 return this.Error("Error getting stacks", e);
             }
         }
+
+
+
     }
+
+
 
 }

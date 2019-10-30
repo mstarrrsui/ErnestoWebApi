@@ -1,19 +1,20 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 using Shared.TaskApi.Data.Entities;
 
 namespace Shared.TaskApi.Data.Contexts
 {
     public partial class RsuiDbContext : DbContext
     {
-        public RsuiDbContext()
-        {
-        }
+        private readonly IConfiguration _config;
 
-        public RsuiDbContext(DbContextOptions<RsuiDbContext> options)
+
+        public RsuiDbContext(DbContextOptions<RsuiDbContext> options, IConfiguration config)
             : base(options)
         {
+            this._config = config;
         }
 
         public virtual DbSet<Departments> Departments { get; set; }
@@ -26,6 +27,10 @@ namespace Shared.TaskApi.Data.Contexts
         {
             if (!optionsBuilder.IsConfigured)
             {
+                optionsBuilder
+                    //.UseLoggerFactory(GetLoggerFactory())
+                    //.EnableSensitiveDataLogging(true)
+                    .UseSqlServer(_config.GetConnectionString("TaskDB"));
             }
         }
 

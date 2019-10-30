@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Shared.TaskApi.Data.Contexts;
 using Shared.TaskApi.Services.Tasks;
 
 namespace Shared.TaskApi
@@ -29,8 +30,10 @@ namespace Shared.TaskApi
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             var settings = Configuration.GetSection("Settings");
             services.Configure<Settings.SiteSettings>(settings);
-            services.AddSingleton<TaskDataRetriever>();
-            services.AddSingleton<StackDataRetriever>();
+            services.AddDbContext<RsuiDbContext>();
+            services.AddScoped<TaskDataRetriever>();
+            services.AddScoped<StackDataRetriever>();
+
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

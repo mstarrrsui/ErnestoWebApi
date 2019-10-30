@@ -12,7 +12,7 @@ namespace Shared.TaskApi.Data.Entities
             Task = new HashSet<TaskEntity>();
             TaskSubType = new HashSet<TaskSubType>();
         }
-
+        [Key]
         [Column("TaskTypeID")]
         public int TaskTypeId { get; set; }
         [Required]
