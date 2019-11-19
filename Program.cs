@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Shared.TaskApi.Configs;
 
 namespace Shared.TaskApi
 {
@@ -27,6 +21,6 @@ namespace Shared.TaskApi
                     options.Authentication.Schemes = AuthenticationSchemes.NTLM;
                     options.UrlPrefixes.Add("https://*:5001");
                 })
-                .UseStartup<Startup>();
+                .UseStartup<StartupConfig>();
     }
 }
