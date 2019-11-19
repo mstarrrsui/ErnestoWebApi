@@ -1,25 +1,26 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Shared.TaskApi.Settings;
 
 namespace Shared.TaskApi.Controllers
 {
-    [Route("api/pulse")]
     [ApiController]
+    [AllowAnonymous]
+    [Route("api/pulse")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class PulseController : ControllerBase
     {
-        private readonly SiteSettings _siteSettings;
+        private readonly SiteSettings _SiteSettings;
         public PulseController(IOptions<SiteSettings> siteSettings)
         {
-            this._siteSettings = siteSettings.Value;
-
+            _SiteSettings = siteSettings.Value;
         }
 
-        // GET api/values
         [HttpGet("ping")]
         public ActionResult<string> Get()
         {
-            return Ok($"pong - version:${this._siteSettings.Version}");
+            return Ok($"Pong {_SiteSettings.Version}");
         }
     }
 

@@ -6,6 +6,5 @@ namespace Shared.TaskApi.Models
         public int FlowId { get; set; }
         public int StepId { get; set; }
         public string Note { get; set; }
-
     }
 }

@@ -6,6 +6,5 @@ namespace Shared.TaskApi.Models
         public string ErrorType { get; set; }
         public string ErrorMessage { get; set; }
         public TResult Result { get; set; }
-
     }
 }

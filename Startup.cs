@@ -16,6 +16,8 @@ using HibernatingRhinos.Profiler.Appender.EntityFramework;
 using Shared.TaskApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.TaskApi.Settings;
+using Microsoft.AspNetCore.Server.IISIntegration;
+using ErnestoWebApi.Configs;
 
 namespace Shared.TaskApi
 {
@@ -38,7 +40,8 @@ namespace Shared.TaskApi
             services.AddAutoMapper(typeof(Startup));
             services.AddTransient<TaskDataRetriever>();
             services.AddTransient<StackDataRetriever>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddCustomAuthentication();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +52,7 @@ namespace Shared.TaskApi
                 app.UseDeveloperExceptionPage();
                 EntityFrameworkProfiler.Initialize();
             }
+            app.UseAuthentication();
             app.UseHsts();
             app.UseHttpsRedirection();
             app.UseMvc();

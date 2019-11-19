@@ -4,13 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Shared.TaskApi.Controllers.Extensions;
 using Shared.TaskApi.Models;
 using Shared.TaskApi.Services.Tasks;
 
 namespace Shared.TaskApi.Controllers
 {
-    [Route("api/tasks")]
     [ApiController]
+    [Route("api/tasks")]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class TaskController : ControllerBase
     {
         private readonly ILogger<TaskController> _logger;
@@ -22,13 +24,13 @@ namespace Shared.TaskApi.Controllers
             this._retriever = retriever;
         }
 
-        // TODO: come back and add code to actually hit the database
+        // TODO come back and add code to actually hit the database
         [HttpGet]
         public async Task<ActionResult<IEnumerable<string>>> GetActiveTasks()
         {
             try
             {
-                _logger.LogInformation("Getting task ids");
+                _logger.LogInformation("Getting task ids for all");
                 var taskids = await _retriever.GetActiveTasks();
                 var taskmodels = taskids
                     .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
@@ -37,32 +39,8 @@ namespace Shared.TaskApi.Controllers
             }
             catch (Exception e)
             {
-                return this.Error("Get active tasks", e);
+                return this.Error("Get active tasks failed", e);
             }
-        }
-    }
-
-    internal static class ContollerExtensions
-    {
-        internal static ActionResult Success<TResult>(this ControllerBase controller, TResult result)
-        {
-            var apiresult = new ApiResultModel<TResult>
-            {
-                isSuccess = true,
-                Result = result
-            };
-            return controller.StatusCode(200, apiresult);
-        }
-
-        internal static ActionResult Error(this ControllerBase controller, string message, Exception exception)
-        {
-            var apiresult = new ApiResultModel<object>
-            {
-                isSuccess = false,
-                ErrorType = exception.GetType().Name,
-                ErrorMessage = message + ". " + exception.ToString() // FIXME: never expose internal details
-            };
-            return controller.StatusCode(523, apiresult);
         }
     }
 }
