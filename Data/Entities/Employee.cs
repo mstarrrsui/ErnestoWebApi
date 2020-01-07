@@ -45,6 +45,7 @@ namespace Shared.TaskApi.Data.Entities
         public int? EmpBranchNumber { get; set; }
         [Column("EMP_DEPARTMENT_NUMBER")]
         public int? EmpDepartmentNumber { get; set; }
+        public Departments EmpDepartment { get; set; }
         [Column("EMP_EMAIL_ADDRESS")]
         [StringLength(60)]
         public string EmpEmailAddress { get; set; }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,6 @@ using HibernatingRhinos.Profiler.Appender.EntityFramework;
 using Shared.TaskApi.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Shared.TaskApi.Settings;
-using Microsoft.AspNetCore.Server.IISIntegration;
 using ErnestoWebApi.Configs;
 
 namespace Shared.TaskApi.Configs
@@ -30,7 +30,6 @@ namespace Shared.TaskApi.Configs
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var settingssection = Configuration.GetSection("Settings");
@@ -41,21 +40,23 @@ namespace Shared.TaskApi.Configs
             services.AddTransient<TaskDataRetriever>();
             services.AddTransient<StackDataRetriever>();
             services.AddCustomAuthentication();
-            services.AddMvc();
+            services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 EntityFrameworkProfiler.Initialize();
             }
-            app.UseAuthentication();
+            app.UseCors(options => {});
             app.UseHsts();
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endPoints => endPoints.MapControllers());
         }
     }
 }

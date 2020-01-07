@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore;
+﻿using System.IO;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.Extensions.Hosting;
 using Shared.TaskApi.Configs;
 
 namespace Shared.TaskApi
@@ -12,15 +14,19 @@ namespace Shared.TaskApi
             CreateWebHostBuilder(args).Build().Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseEnvironment("Development")
-                .UseHttpSys(options => 
+        public static IHostBuilder CreateWebHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .UseContentRoot(Directory.GetCurrentDirectory())
+            .UseEnvironment("Development")
+            .ConfigureWebHostDefaults(webHost =>
+            {
+                webHost.UseHttpSys(options =>
                 {
                     options.Authentication.AllowAnonymous = true;
                     options.Authentication.Schemes = AuthenticationSchemes.NTLM;
                     options.UrlPrefixes.Add("https://*:5001");
-                })
-                .UseStartup<StartupConfig>();
+                });
+                webHost.UseStartup<StartupConfig>();
+            });
     }
 }

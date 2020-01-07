@@ -1,5 +1,6 @@
 using ErnestoWebApi.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,7 @@ namespace ErnestoWebApi.Configs
         public static void AddCustomAuthentication(this IServiceCollection services)
         {
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
+            services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
             var builder = services.AddAuthentication(options => 
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

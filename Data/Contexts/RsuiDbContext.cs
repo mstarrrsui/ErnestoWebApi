@@ -50,7 +50,7 @@ namespace Shared.TaskApi.Data.Entities
             {
                 entity.HasKey(e => e.EmpRecordNumber)
                     .HasName("PK__EMPLOYEE__5CF9F418")
-                    .ForSqlServerIsClustered(false);
+                    .IsClustered(false);
 
                 entity.HasIndex(e => e.EmpLastName)
                     .HasName("XIE3EMPLOYEE");
@@ -139,6 +139,10 @@ namespace Shared.TaskApi.Data.Entities
                     .WithMany(p => p.InverseReportingManager)
                     .HasForeignKey(d => d.ReportingManagerId)
                     .HasConstraintName("FK_EMPLOYEE_EMPLOYEE1");
+
+                entity.HasOne(table => table.EmpDepartment)
+                    .WithMany()
+                    .HasForeignKey(table => table.EmpDepartmentNumber);
             });
 
             modelBuilder.Entity<TaskEntity>(entity =>
