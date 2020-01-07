@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -57,11 +58,12 @@ namespace Shared.TaskApi.Controllers
                     .ProjectTo<ActiveUser>(_ModelMapper.ConfigurationProvider)
                     .SingleOrDefaultAsync();
                 var activeuserjson = JsonConvert.SerializeObject(activeuser);
-                var activeuserclaim = new Claim("ActiveUser", activeuserjson);
-                var activeusertoken = TokenFactory.CreateJwtToken(username, activeuserclaim);
+                var activeuserclaim = new List<Claim>{new Claim("ActiveUser", activeuserjson)};
+                var activeusertoken = TokenFactory.CreateJwtToken(username, activeuserclaim, out var expires);
 
                 var userdetails = _ModelMapper.Map<UserDetailsModel>(activeuser);
                 userdetails.Token = activeusertoken;
+                userdetails.TokenTtl = expires;
                 // TODO give this guy a time to live and also pass in the security key
                 return this.Success(userdetails);
             }

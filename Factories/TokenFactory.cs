@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,9 +13,14 @@ namespace ErnestoWebApi.Factories
 {
     public static class TokenFactory
     {
-        public static string CreateJwtToken(string userName, params Claim[] claims)
+        internal static string DefaultAudienceName {get; private set;} = "RSUI";
+        internal static string DefaultIssuerName {get; private set;} = Environment.MachineName;
+
+
+        public static string CreateJwtToken(string userName, ICollection<Claim> claims, out DateTime expires)
         {
             var guid = System.Guid.NewGuid().ToString("N");
+            expires = DateTime.UtcNow.AddHours(1);
 
             // claims
             var securityclaims = new List<Claim>
@@ -21,38 +28,48 @@ namespace ErnestoWebApi.Factories
                 new Claim(JwtRegisteredClaimNames.Jti, guid),
                 new Claim(JwtRegisteredClaimNames.UniqueName, userName),
             };
-            // custom claims
             claims?.ToList().ForEach(securityclaims.Add);
 
-            // security key
-            var securitykey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("0a2d3e8dcae64b6e90da44c017c81096f8acbbd5e4b14ff79ee1197f80c64c23ccd6b79eeacb430f9b294813a6cfcdb2457bc6af89e8453e8d449c16667ff54f"));
-            // security creds (uses key)
-            var securitycreds = new SigningCredentials(securitykey, SecurityAlgorithms.HmacSha256);
-            // security token (uses credentials) // FIXME add more things to beef up this token so invalidation is more likely to occur
-            var securitytoken = new JwtSecurityToken(
-                claims: securityclaims,
-                notBefore: DateTime.Now,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: securitycreds
-            );
-            // token handler
+            var enctypedcertbytes = File.ReadAllBytes(@"\\rsuifs00\Department\Development\EVanRensburg\- Certificates\Other\2018 Through 2019\rsui.pfx");
+            var encrypredcert = new X509Certificate2(enctypedcertbytes, "rsui");
+            var encryptedcreds = new X509EncryptingCredentials(encrypredcert);
+            var signingkey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("0a2d3e8dcae64b6e90da44c017c81096f8acbbd5e4b14ff79ee1197f80c64c23ccd6b79eeacb430f9b294813a6cfcdb2457bc6af89e8453e8d449c16667ff54f"));
+            var signingcreds = new SigningCredentials(signingkey, SecurityAlgorithms.HmacSha256);
+            var signingtoken = new SecurityTokenDescriptor()
+            {
+                Audience = DefaultAudienceName,
+                Issuer = DefaultIssuerName,
+                Subject = new ClaimsIdentity(securityclaims),
+                NotBefore = DateTime.UtcNow,
+                Expires = expires,
+                SigningCredentials = signingcreds,
+                EncryptingCredentials = encryptedcreds
+            };
             var tokenhandler = new JwtSecurityTokenHandler();
-            // token
-            var token = tokenhandler.WriteToken(securitytoken);
+            var token = tokenhandler.CreateEncodedJwt(signingtoken);
             return token;
         }
 
         public static void ValidateJwtToken(JwtBearerOptions options)
         {
+            var dencrypedcertbytes = File.ReadAllBytes(@"\\rsuifs00\Department\Development\EVanRensburg\- Certificates\Other\2018 Through 2019\rsui.pfx");
+            var decryptedkey = new X509SecurityKey(new X509Certificate2(dencrypedcertbytes, "rsui"));
             var securitykey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("0a2d3e8dcae64b6e90da44c017c81096f8acbbd5e4b14ff79ee1197f80c64c23ccd6b79eeacb430f9b294813a6cfcdb2457bc6af89e8453e8d449c16667ff54f"));
             options.RequireHttpsMetadata = false;
             options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                // FIXME this token is almost wide open, lock it down now that we have a simple working example
+                RequireSignedTokens = false,
                 IssuerSigningKey = securitykey,
-                ValidateAudience = false,
-                ValidateIssuer = false
+                TokenDecryptionKey = decryptedkey,
+                ValidateAudience = true,
+                ValidAudience = DefaultAudienceName,
+                ValidateIssuer = true,
+                ValidIssuer = DefaultIssuerName,
+                ValidateLifetime = true,
+                LifetimeValidator = (DateTime? notBefore, DateTime? expires, SecurityToken securityToken, TokenValidationParameters validationParameters) => {
+                    return DateTime.UtcNow >= notBefore && DateTime.UtcNow <= expires;
+                }
             };
         }
     }
