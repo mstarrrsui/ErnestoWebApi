@@ -1,23 +1,15 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using HibernatingRhinos.Profiler.Appender.EntityFramework;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
+using Shared.TaskApi.Data.Contexts;
 using Shared.TaskApi.Services.Tasks;
-using HibernatingRhinos.Profiler.Appender.EntityFramework;
-using Shared.TaskApi.Data.Entities;
-using Microsoft.EntityFrameworkCore;
 using Shared.TaskApi.Settings;
-using ErnestoWebApi.Configs;
+
 
 namespace Shared.TaskApi.Configs
 {
@@ -39,7 +31,7 @@ namespace Shared.TaskApi.Configs
             services.AddAutoMapper(typeof(StartupConfig));
             services.AddTransient<TaskDataRetriever>();
             services.AddTransient<StackDataRetriever>();
-            services.AddCustomAuthentication();
+            services.AddAuthentication(settings);
             services.AddControllers();
         }
 

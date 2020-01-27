@@ -2,7 +2,7 @@ using System.Linq;
 using AutoMapper;
 using Shared.TaskApi.Data.Entities;
 
-namespace ErnestoWebApi.Models
+namespace Shared.TaskApi.Models
 {
     public class StepDetailsModelProfile : Profile
     {

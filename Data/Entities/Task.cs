@@ -5,9 +5,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Shared.TaskApi.Data.Entities
 {
-    [Table("Task")]
     public partial class TaskEntity
     {
+        public TaskEntity()
+        {
+            TaskHistory = new HashSet<TaskHistory>();
+        }
+
         [Key]
         [Column("TaskID")]
         public int TaskId { get; set; }
@@ -49,23 +53,34 @@ namespace Shared.TaskApi.Data.Entities
         public int? BrokerCurrentlyAssignedTo { get; set; }
         public bool? ClosedWithNoIssue { get; set; }
 
-        [ForeignKey("CompletedBy")]
-        [InverseProperty("TaskCompletedByNavigation")]
+        [ForeignKey(nameof(BrokerCurrentlyAssignedTo))]
+        [InverseProperty(nameof(People.Task))]
+        public virtual People BrokerCurrentlyAssignedToNavigation { get; set; }
+        [ForeignKey(nameof(ClaimKey))]
+        [InverseProperty(nameof(Claims.Task))]
+        public virtual Claims ClaimKeyNavigation { get; set; }
+        [ForeignKey(nameof(CompletedBy))]
+        [InverseProperty(nameof(Employee.TaskCompletedByNavigation))]
         public virtual Employee CompletedByNavigation { get; set; }
-        [ForeignKey("CreatedBy")]
-        [InverseProperty("TaskCreatedByNavigation")]
+        [ForeignKey(nameof(CreatedBy))]
+        [InverseProperty(nameof(Employee.TaskCreatedByNavigation))]
         public virtual Employee CreatedByNavigation { get; set; }
-        [ForeignKey("CurrentSubType")]
-        [InverseProperty("Task")]
+        [ForeignKey(nameof(CurrentSubType))]
+        [InverseProperty(nameof(TaskSubType.Task))]
         public virtual TaskSubType CurrentSubTypeNavigation { get; set; }
-        [ForeignKey("CurrentTaskType")]
-        [InverseProperty("Task")]
+        [ForeignKey(nameof(CurrentTaskType))]
+        [InverseProperty(nameof(TaskType.Task))]
         public virtual TaskType CurrentTaskTypeNavigation { get; set; }
-        [ForeignKey("CurrentlyAssignedTo")]
-        [InverseProperty("TaskCurrentlyAssignedToNavigation")]
+        [ForeignKey(nameof(CurrentlyAssignedTo))]
+        [InverseProperty(nameof(Employee.TaskCurrentlyAssignedToNavigation))]
         public virtual Employee CurrentlyAssignedToNavigation { get; set; }
-        [ForeignKey("SuspensedBy")]
-        [InverseProperty("TaskSuspensedByNavigation")]
+        [ForeignKey(nameof(SubRecordNumber))]
+        [InverseProperty(nameof(Submission.Task))]
+        public virtual Submission SubRecordNumberNavigation { get; set; }
+        [ForeignKey(nameof(SuspensedBy))]
+        [InverseProperty(nameof(Employee.TaskSuspensedByNavigation))]
         public virtual Employee SuspensedByNavigation { get; set; }
+        [InverseProperty("Task")]
+        public virtual ICollection<TaskHistory> TaskHistory { get; set; }
     }
 }

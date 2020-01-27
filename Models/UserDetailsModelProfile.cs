@@ -1,7 +1,7 @@
 using AutoMapper;
 using Shared.TaskApi.Data.Entities;
 
-namespace ErnestoWebApi.Controllers.Models
+namespace Shared.TaskApi.Controllers.Models
 {
     public class UserDetailsModelProfile : Profile
     {

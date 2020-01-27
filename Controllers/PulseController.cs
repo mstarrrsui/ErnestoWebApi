@@ -7,7 +7,7 @@ namespace Shared.TaskApi.Controllers
 {
     [ApiController]
     [AllowAnonymous]
-    [Route("api/pulse")]
+    [Route("pulse")]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class PulseController : ControllerBase
     {

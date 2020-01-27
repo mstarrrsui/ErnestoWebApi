@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ErnestoWebApi.Models
+namespace Shared.TaskApi.Models
 {
     public class StackDetailsModel
     {

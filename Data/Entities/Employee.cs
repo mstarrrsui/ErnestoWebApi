@@ -10,14 +10,20 @@ namespace Shared.TaskApi.Data.Entities
     {
         public Employee()
         {
+            ClaimsModByNavigation = new HashSet<Claims>();
+            ClaimsTpamonitorKeyNavigation = new HashSet<Claims>();
             InverseDefaultAssistantNavigation = new HashSet<Employee>();
             InverseReportingManager = new HashSet<Employee>();
+            Submission = new HashSet<Submission>();
             TaskCompletedByNavigation = new HashSet<TaskEntity>();
             TaskCreatedByNavigation = new HashSet<TaskEntity>();
             TaskCurrentlyAssignedToNavigation = new HashSet<TaskEntity>();
+            TaskHistoryAssignedByNavigation = new HashSet<TaskHistory>();
+            TaskHistoryAssignedToNavigation = new HashSet<TaskHistory>();
             TaskSuspensedByNavigation = new HashSet<TaskEntity>();
         }
 
+        [Key]
         [Column("EMP_RECORD_NUMBER")]
         public int EmpRecordNumber { get; set; }
         [Required]
@@ -115,23 +121,33 @@ namespace Shared.TaskApi.Data.Entities
         [StringLength(255)]
         public string QuoteLetterSignatureText { get; set; }
 
-        [ForeignKey("DefaultAssistant")]
-        [InverseProperty("InverseDefaultAssistantNavigation")]
+        [ForeignKey(nameof(DefaultAssistant))]
+        [InverseProperty(nameof(Employee.InverseDefaultAssistantNavigation))]
         public virtual Employee DefaultAssistantNavigation { get; set; }
-        [ForeignKey("ReportingManagerId")]
-        [InverseProperty("InverseReportingManager")]
+        [ForeignKey(nameof(ReportingManagerId))]
+        [InverseProperty(nameof(Employee.InverseReportingManager))]
         public virtual Employee ReportingManager { get; set; }
-        [InverseProperty("DefaultAssistantNavigation")]
+        [InverseProperty(nameof(Claims.ModByNavigation))]
+        public virtual ICollection<Claims> ClaimsModByNavigation { get; set; }
+        [InverseProperty(nameof(Claims.TpamonitorKeyNavigation))]
+        public virtual ICollection<Claims> ClaimsTpamonitorKeyNavigation { get; set; }
+        [InverseProperty(nameof(Employee.DefaultAssistantNavigation))]
         public virtual ICollection<Employee> InverseDefaultAssistantNavigation { get; set; }
-        [InverseProperty("ReportingManager")]
+        [InverseProperty(nameof(Employee.ReportingManager))]
         public virtual ICollection<Employee> InverseReportingManager { get; set; }
-        [InverseProperty("CompletedByNavigation")]
+        [InverseProperty("EmpRecordNumberNavigation")]
+        public virtual ICollection<Submission> Submission { get; set; }
+        [InverseProperty(nameof(TaskEntity.CompletedByNavigation))]
         public virtual ICollection<TaskEntity> TaskCompletedByNavigation { get; set; }
-        [InverseProperty("CreatedByNavigation")]
+        [InverseProperty(nameof(TaskEntity.CreatedByNavigation))]
         public virtual ICollection<TaskEntity> TaskCreatedByNavigation { get; set; }
-        [InverseProperty("CurrentlyAssignedToNavigation")]
+        [InverseProperty(nameof(TaskEntity.CurrentlyAssignedToNavigation))]
         public virtual ICollection<TaskEntity> TaskCurrentlyAssignedToNavigation { get; set; }
-        [InverseProperty("SuspensedByNavigation")]
+        [InverseProperty(nameof(TaskHistory.AssignedByNavigation))]
+        public virtual ICollection<TaskHistory> TaskHistoryAssignedByNavigation { get; set; }
+        [InverseProperty(nameof(TaskHistory.AssignedToNavigation))]
+        public virtual ICollection<TaskHistory> TaskHistoryAssignedToNavigation { get; set; }
+        [InverseProperty(nameof(TaskEntity.SuspensedByNavigation))]
         public virtual ICollection<TaskEntity> TaskSuspensedByNavigation { get; set; }
     }
 }

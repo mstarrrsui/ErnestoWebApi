@@ -1,75 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using ErnestoWebApi.Controllers.Models;
-using ErnestoWebApi.Factories;
-using ErnestoWebApi.Services.Users;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Shared.TaskApi.Controllers.Extensions;
-using Shared.TaskApi.Data.Entities;
+using Shared.TaskApi.Models;
 using Shared.TaskApi.Services.Tasks;
-using Shared.TaskApi.Settings;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
 
 namespace Shared.TaskApi.Controllers
 {
     [ApiController]
-    [Route("api/login")]
-    [Authorize(AuthenticationSchemes = "Windows")]
+    [Route("user")]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class UserController : ControllerBase
     {
-        private readonly SiteSettings _SiteSettings;
-        private readonly RsuiDbContext _DbContext;
-        private readonly StackDataRetriever _StackDataRetriever;
-        private readonly IMapper _ModelMapper;
+        private readonly ILogger<UserController> _logger;
+        private readonly TaskDataRetriever _retriever;
 
-        public UserController(
-            IOptions<SiteSettings> siteSettings,
-            RsuiDbContext dbContext,
-            IMapper modelMapper,
-            StackDataRetriever stackDataRetriever
-        )
+        public UserController(ILogger<UserController> logger, TaskDataRetriever retriever)
         {
-            _SiteSettings = siteSettings.Value;
-            _DbContext = dbContext;
-            _StackDataRetriever = stackDataRetriever;
-            _ModelMapper = modelMapper;
+            this._logger = logger;
+            this._retriever = retriever;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public async Task<ActionResult<TaskDetailsModel[]>> GetActiveTasks()
         {
             try
             {
-                var username = HttpContext.GetUserNameOrThrow();
-                var activeuser = await _DbContext.Employee
-                    .Where(inst => inst.EmpUserProfile == username)
-                    .Where(inst => inst.EmpActiveCode == "A")
-                    .AsNoTracking()
-                    .ProjectTo<ActiveUser>(_ModelMapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync();
-                var activeuserjson = JsonConvert.SerializeObject(activeuser);
-                var activeuserclaim = new List<Claim>{new Claim("ActiveUser", activeuserjson)};
-                var activeusertoken = TokenFactory.CreateJwtToken(username, activeuserclaim, out var expires);
-
-                var userdetails = _ModelMapper.Map<UserDetailsModel>(activeuser);
-                userdetails.Token = activeusertoken;
-                userdetails.TokenTtl = expires;
-                // TODO give this guy a time to live and also pass in the security key
-                return this.Success(userdetails);
+                _logger.LogInformation("Getting task ids for all");
+                var taskids = await _retriever.GetActiveTasks();
+                var taskmodels = taskids
+                    .Select(id => new TaskDetailsModel { Id = id, Note = $"Task {id}" })
+                    .ToArray();
+                return this.Success(taskmodels);
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return this.Error("Login failed", ex);
+                return this.Error("Get active tasks failed", e);
             }
         }
     }

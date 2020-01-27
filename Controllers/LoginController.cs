@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Shared.TaskApi.Models;
+using Shared.TaskApi.Controllers.Models;
+using Shared.TaskApi.Factories;
+using Shared.TaskApi.Services.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Shared.TaskApi.Controllers.Extensions;
 using Shared.TaskApi.Data.Contexts;
 using Shared.TaskApi.Services.Tasks;
@@ -16,17 +22,17 @@ using Shared.TaskApi.Settings;
 namespace Shared.TaskApi.Controllers
 {
     [ApiController]
-    [Route("stacks")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Route("login")]
+    [Authorize(AuthenticationSchemes = "Windows")]
     [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-    public class StackController : ControllerBase
+    public class LoginController : ControllerBase
     {
         private readonly SiteSettings _SiteSettings;
         private readonly RsuiDbContext _DbContext;
         private readonly StackDataRetriever _StackDataRetriever;
         private readonly IMapper _ModelMapper;
 
-        public StackController(
+        public LoginController(
             IOptions<SiteSettings> siteSettings,
             RsuiDbContext dbContext,
             IMapper modelMapper,
@@ -40,24 +46,29 @@ namespace Shared.TaskApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDepartmentStacks()
+        public async Task<IActionResult> Login()
         {
             try
             {
                 var username = HttpContext.GetUserNameOrThrow();
-                // TODO next objective, get the active user from the token and ensure the user can edit tasks first
-                var stacks = await _DbContext
-                    .TaskType
-                    .Include(inst => inst.TaskSubType)
-                    .Where(inst => inst.ProfitCenterKey == 3)
+                var activeuser = await _DbContext.Employee
+                    .Where(inst => inst.EmpUserProfile == username)
+                    .Where(inst => inst.EmpActiveCode == "A")
                     .AsNoTracking()
-                    .ProjectTo<StackDetailsModel>(_ModelMapper.ConfigurationProvider)
-                    .ToListAsync();
-                return this.Success(stacks);
+                    .ProjectTo<ActiveUser>(_ModelMapper.ConfigurationProvider)
+                    .SingleOrDefaultAsync();
+                var activeuserjson = JsonConvert.SerializeObject(activeuser);
+                var activeuserclaim = new List<Claim>{new Claim("ActiveUser", activeuserjson)};
+                var activeusertoken = TokenFactory.CreateJwtToken(username, activeuserclaim, out var expires);
+
+                var userdetails = _ModelMapper.Map<UserDetailsModel>(activeuser);
+                userdetails.Token = activeusertoken;
+                userdetails.TokenTtl = expires;
+                return this.Success(userdetails);
             }
             catch (Exception ex)
             {
-                return this.Error("Get department stacks", ex);
+                return this.Error("Login failed", ex);
             }
         }
     }

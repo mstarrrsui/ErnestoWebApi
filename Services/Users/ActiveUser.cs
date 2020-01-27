@@ -1,4 +1,4 @@
-namespace ErnestoWebApi.Services.Users
+namespace Shared.TaskApi.Services.Users
 {
     public class ActiveUser 
     {

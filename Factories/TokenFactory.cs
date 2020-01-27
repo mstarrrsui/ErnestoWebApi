@@ -9,7 +9,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ErnestoWebApi.Factories
+namespace Shared.TaskApi.Factories
 {
     public static class TokenFactory
     {

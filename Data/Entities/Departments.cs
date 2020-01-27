@@ -8,6 +8,11 @@ namespace Shared.TaskApi.Data.Entities
     [Table("DEPARTMENTS")]
     public partial class Departments
     {
+        public Departments()
+        {
+            PolicySymbol = new HashSet<PolicySymbol>();
+        }
+
         [Key]
         [Column("DEPARTMENT_NUMBER")]
         public int DepartmentNumber { get; set; }
@@ -35,5 +40,8 @@ namespace Shared.TaskApi.Data.Entities
         public bool ExternalAccessToForms { get; set; }
         [StringLength(10)]
         public string ShortDescription { get; set; }
+
+        [InverseProperty("DepartmentNumberNavigation")]
+        public virtual ICollection<PolicySymbol> PolicySymbol { get; set; }
     }
 }

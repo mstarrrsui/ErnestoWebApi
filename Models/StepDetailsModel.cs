@@ -1,4 +1,4 @@
-namespace ErnestoWebApi.Models
+namespace Shared.TaskApi.Models
 {
     public class StepDetailsModel
     {

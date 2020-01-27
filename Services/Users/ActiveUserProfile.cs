@@ -1,8 +1,8 @@
 using AutoMapper;
-using ErnestoWebApi.Controllers.Models;
+using Shared.TaskApi.Controllers.Models;
 using Shared.TaskApi.Data.Entities;
 
-namespace ErnestoWebApi.Services.Users
+namespace Shared.TaskApi.Services.Users
 {
     public class ActiveUserProfile : Profile 
     {

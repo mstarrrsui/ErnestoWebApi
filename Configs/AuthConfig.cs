@@ -1,16 +1,15 @@
-using ErnestoWebApi.Factories;
+using Shared.TaskApi.Factories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.TaskApi.Settings;
 
-namespace ErnestoWebApi.Configs
+namespace Shared.TaskApi.Configs
 {
     public static class AuthConfig
     {
-        public static void AddCustomAuthentication(this IServiceCollection services)
+        public static void AddAuthentication(this IServiceCollection services, SiteSettings siteSettings)
         {
-            services.AddAuthentication(IISDefaults.AuthenticationScheme);
             services.AddAuthentication(HttpSysDefaults.AuthenticationScheme);
             var builder = services.AddAuthentication(options => 
             {

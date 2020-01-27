@@ -1,6 +1,6 @@
 using System;
 
-namespace ErnestoWebApi.Controllers.Models
+namespace Shared.TaskApi.Controllers.Models
 {
     public class UserDetailsModel
     {

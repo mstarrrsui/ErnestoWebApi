@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Shared.TaskApi.Data.Entities;
+using Shared.TaskApi.Data.Contexts;
 
 namespace Shared.TaskApi.Services.Tasks
 {
